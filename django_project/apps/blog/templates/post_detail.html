@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+    {% if posts.imagen %}
+        <img src="{{posts.imagen.url}}" alt=''>
+    {% endif %}
+
+    <h1>{{ object.titulo }}</h1>
+    <h6>{{ object.fecha_creacion }}</h6>
+    <p>{{ object.contenido }}</p>
+    <br>
+    <h3>Ingredientes necesarios</h3>
+    <p>{{ object.receta }}</p>
+    <br>
+    <h3>Instrucciones</h3>
+    <p>{{ object.instrucciones }}</p>
+
+        {% if user.is_authenticated and user == posts.autor %}
+            <h2><a href="{% url 'post_delete' posts.id %}">Eliminar</a></h2>
+            <h2><a href="{% url 'post_update' posts.id %}">Modificar</a></h2>
+        {% endif %}
+
+    <p>Nota creada por {{ object.autor }}</p>
+
+    <hr>
+
+    <h2>Comentarios</h2>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'comentar_post' posts.id %}" method="post">
+            {% csrf_token %}
+            
+            {{ form.contenido }}
+            <button type="submit">Comentar</button>
+        </form>
+    {% endif %}
+
+    {% for comentario in posts.comentarios.all %}
+
+        <h2>{{ comentario.autor }}</h2> 
+        <h6>{{ comentario.fecha_creacion }}</h6>
+        <p>{{ comentario.contenido}}</p> <br>
+
+        {% if user.is_authenticated and user == posts.autor %}
+            <a href="">Eliminar</a>
+            <a href="">Modificar</a>
+        {% endif %}
+        
+    {% endfor %}
+
+{% endblock %}
