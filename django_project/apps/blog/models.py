@@ -24,7 +24,7 @@ class Post(models.Model):
     imagen = models.ImageField(null=True, blank=True, upload_to='media/posts')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
+    categorias = models.ManyToManyField(Categoria, blank=True)  
 
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.pk)])
@@ -52,3 +52,4 @@ class Comentario(models.Model):
         verbose_name = 'Comentario'
         verbose_name_plural = 'Comentarios'
         ordering = ['-fecha_creacion']
+

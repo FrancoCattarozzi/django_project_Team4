@@ -6,7 +6,7 @@
 
 
     {% if posts.imagen %}
-        <img src="{{posts.imagen.url}}" alt=''>
+        <img src="{{posts.imagen.url}}" class="img-fluid" alt=''>
     {% endif %}
 
     <h1>{{ object.titulo }}</h1>
@@ -19,9 +19,11 @@
     <h3>Instrucciones</h3>
     <p>{{ object.instrucciones }}</p>
 
-        {% if user.is_authenticated and user == posts.autor %}
-            <h2><a href="{% url 'post_delete' posts.id %}">Eliminar</a></h2>
-            <h2><a href="{% url 'post_update' posts.id %}">Modificar</a></h2>
+        {% if user.is_authenticated %}
+            {% if user.is_staff or user == posts.autor %}   
+                <h2><a href="{% url 'post_delete' posts.id %}">Eliminar</a></h2>
+                <h2><a href="{% url 'post_update' posts.id %}">Modificar</a></h2>
+            {% endif %}
         {% endif %}
 
     <p>Nota creada por {{ object.autor }}</p>
@@ -45,9 +47,11 @@
         <h6>{{ comentario.fecha_creacion }}</h6>
         <p>{{ comentario.contenido}}</p> <br>
 
-        {% if user.is_authenticated and user == posts.autor %}
-            <a href="">Eliminar</a>
-            <a href="">Modificar</a>
+        {% if user.is_authenticated %}
+            {% if user.is_staff or user == posts.autor %}   
+                <a href="{% url 'comentario_delete' comentario.id %}">Eliminar</a>
+                <a href="{% url 'comentario_update' comentario.id %}">Modificar</a>
+            {% endif %}
         {% endif %}
         
     {% endfor %}

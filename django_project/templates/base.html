@@ -4,21 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <title>{% block titulo %} Blog {% endblock %}</title>
+    <title>{% block titulo %} Blog Recetas {% endblock %}</title>
 </head>
 <body>
 
-
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'post_list' %}">Inicio</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Inicio</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'post_list' %}">Blog</a>
             </li>
             {% if user.is_authenticated %}
                 <li class="nav-item">
@@ -35,6 +33,31 @@
                 <a class="nav-link" href="{% url 'login' %}">Inicio de sesión</a>
                 </li>
             {% endif %}
+            <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'post_list' %}">Acerca de</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'post_list' %}">Contacto</a>
+            </li>
+            {% if categorias and categoria_activa is not None %}
+            <li class="nav-item dropdown">
+                <div class="row mb-4">
+                    <div >
+                        <form method="get" >
+                            <select class="form-select" name="categorias" onchange="this.form.submit()">
+                                <option value="0" {% if categoria_activa == 0 %}selected{% endif %}>Todas las categorías</option>
+                                <hr class="dropdown-divider">
+                                {% for cat in categorias %}
+                                    <option value="{{ cat.id }}" {% if categoria_activa == cat.id %} selected {% endif %}>
+                                        {{ cat.nombre }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </li>
+            {% endif %}
         </ul>
         </div>
     </div>
@@ -43,7 +66,34 @@
     {% block content %}
 
     {% endblock %}
-    
+    {% if categorias and categoria_activa is not None %}
+        <div>
+            <h3 class="text-center">Acerca de</h3>
+            <p>
+                Somos un blog dedicado a generar un espacio donde los amantes de la cocina puedan compartir sus recetas favoritas, 
+                descubrir nuevas ideas culinarias y conectarse con una comunidad apasionada por la gastronomía. 
+                Nuestro objetivo es inspirar a nuestros lectores a experimentar en la cocina, probar nuevos sabores y técnicas, 
+                y disfrutar del arte de cocinar y compartir comidas deliciosas con familiares y amigos.
+            </p>
+            <p>
+                Si te interesa la comida, la cocina y todo lo relacionado con el mundo culinario, ¡este es el lugar para ti!
+                Únete a nuestra comunidad y comienza a explorar el maravilloso mundo de la gastronomía con nosotros.    
+            </p>
+        </div>
+
+        <footer>
+            <h3 class="text-center">Contacto</h3>
+            <p>Email: <a href="mailto:contacto@tudominio.com">contacto@tudominio.com</a></p>
+            <p>Teléfono: <a href="tel:+541112345678">+54 11 3624-0000</a></p>
+            <p>Dirección: Av. Siempre Viva 123, Buenos Aires</p>
+            <p>
+                <a href="https://facebook.com" target="_blank">Facebook</a> |
+                <a href="https://instagram.com" target="_blank">Instagram</a> |
+                <a href="https://wa.me/5491112345678" target="_blank">WhatsApp</a>
+            </p>
+            <p>&copy; 2025 Tu Empresa. Todos los derechos reservados.</p>
+        </footer>
+    {% endif %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>
 </html>

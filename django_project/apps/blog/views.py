@@ -6,12 +6,26 @@ from django.views.generic import ListView, DetailView, DeleteView, CreateView, U
 from django.urls import reverse_lazy
 from django.forms import modelform_factory 
 from .forms import CreatePostForm, UpdatePostForm
+from .models import Categoria, Comentario
 
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'
     context_object_name = 'posts'
+    paginate_by = 6
 
+    def get_queryset(self):
+        queryset = Post.objects.all()
+        categoria_id = self.request.GET.get('categorias', '0')
+        if categoria_id != '0':
+            queryset = queryset.filter(categorias__id=categoria_id).distinct()
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categorias'] = Categoria.objects.all()
+        context['categoria_activa'] = int(self.request.GET.get('categorias', 0))
+        return context
     
 class PostDetailView(DetailView):
     model = Post
@@ -44,6 +58,17 @@ class ComentarioCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
     
+class ComentarioDeleteView(DeleteView):
+    model = Comentario
+    template_name = 'comentario_confirm_delete.html'
+    success_url = reverse_lazy('post_list')
+    
+class ComentarioUpdateView(UpdateView):
+    model = Comentario
+    fields = ['contenido']
+    template_name = 'comentario_update_form.html'
+    success_url = reverse_lazy('post_list')
+
 # Posteos fuera de admin
 
 class PostCreateView(CreateView):
