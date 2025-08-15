@@ -10,13 +10,13 @@ from .forms import CustomUserCreationForm
 
 def exit(request):
     logout(request)
-    return redirect('post_list')
+    return redirect('index')
 
 
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'registration/register.html'
-    success_url = reverse_lazy('post_list')
+    success_url = reverse_lazy('')
 
     def form_valid(self, form):
         response = super().form_valid(form)
