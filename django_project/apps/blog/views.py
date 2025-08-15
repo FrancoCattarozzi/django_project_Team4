@@ -1,18 +1,17 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from .models import Post, User, Comentario
+from django.shortcuts import get_object_or_404, redirect
+from .models import Post, Comentario
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 from django.views.generic import ListView, DetailView, DeleteView, CreateView, UpdateView
 from django.urls import reverse_lazy
-from django.forms import modelform_factory 
-from .forms import CreatePostForm, UpdatePostForm
+from .forms import CreatePostForm, UpdatePostForm, ComentarioForm
 from .models import Categoria, Comentario
 
 class PostListView(ListView):
     model = Post
     template_name = 'post_list.html'
     context_object_name = 'posts'
-    paginate_by = 6
 
     def get_queryset(self):
         queryset = Post.objects.all()
@@ -30,18 +29,19 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'post_detail.html'
-    context_object_name = 'posts'
+    context_object_name = 'post'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        ComentarioForm = modelform_factory(Comentario, fields = ['contenido'])
-        context['form'] = ComentarioForm
+        context['form'] = ComentarioForm()
         return context
 
 class PostDeleteView(DeleteView):
     model = Post
     template_name = 'post_confirm_delete.html'
     success_url = reverse_lazy('post_list')
+    context_object_name = 'post'
+
 
 # ---------------- VISTAS COMENTARIOS -----------------
 
@@ -85,3 +85,14 @@ class PostUpdateView(UpdateView):
     form_class = UpdatePostForm
     template_name = 'post_update_form.html'
     success_url = reverse_lazy('post_list')
+
+# Likes a posts
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return redirect('post_detail', pk=pk)

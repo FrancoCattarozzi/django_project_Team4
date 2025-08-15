@@ -3,9 +3,32 @@
 {% load static %}
 
 {% block content %}
-    <img src="{% static 'img/imagen_index.jpg' %}" class="img-fluid" style='width: 100%;' alt="">
-    <h3 class="text-center">Bienvenidos a nuestro Blog de recetas</h3>
-    <p class="text-center">Aquí podrá encontrar las mejores recetas</p>
+
+    <h1 class="text-center">Bienvenidos a nuestro Blog de recetas</h1>
+    <h3 class="text-center">¡Aquí podrá encontrar las mejores recetas!</h3>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'post_list' %}" class="btn btn-primary"><h2>¡Ir al Blog!</h2></a>
+    </div>
+
+    <div class="text-center">
+        
+        <div>
+            {% if user.is_authenticated %}
+                <h5>Bienvenido, {{ user.username }}!</h5>
+            {% else %}
+                <p class="m-1">
+                    Para una mejor experiencia, por favor inicie sesión o regístrese si aún no lo ha hecho.
+                </p>
+                <div class="d-flex justify-content-center">
+                    <a class="m-2 btn btn-secondary"href="{% url 'login' %}">Iniciar sesión</a>
+                    <a class="m-2 btn btn-secondary" href="{% url 'register' %}">Registrarse</a>
+                </div>
+            {% endif %}
+        
+        </div>
+    </div>
+    
 
 {% endblock %}
 
